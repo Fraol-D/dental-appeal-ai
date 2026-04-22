@@ -1,0 +1,66 @@
+{
+  "default_strategy": {
+    "strategy_name": "Generic Dental Appeal",
+    "appeal_language": "Request reconsideration using plan terms, clinical rationale, and clear supporting records.",
+    "required_documentation": [
+      "Clinical narrative from treating provider",
+      "Relevant periodontal or radiographic findings",
+      "Chart notes tied to CDT code",
+      "Claim form and EOB denial details"
+    ],
+    "frequency_limitations": {
+      "D1110": "Typically limited to 2 prophylaxis visits per 12 months.",
+      "D4341": "Often limited by plan frequency and site eligibility language."
+    }
+  },
+  "payers": {
+    "Delta Dental": {
+      "common_denial_codes": [
+        "frequency",
+        "alternate_benefit",
+        "medical_necessity"
+      ],
+      "denial_categories": [
+        "frequency_limitation",
+        "medical_necessity",
+        "missing_documentation"
+      ],
+      "strategy_name": "Delta Contract Language + Clinical Evidence",
+      "appeal_language": "Reference Delta policy language, clarify clinical findings, and request review against submitted documentation.",
+      "required_documentation": [
+        "Periodontal charting",
+        "Recent radiographs",
+        "Provider narrative referencing treatment rationale",
+        "Progress notes with dated findings"
+      ],
+      "frequency_limitations": {
+        "D4341": "Commonly denied when policy requires interval since prior SRP claim.",
+        "D1110": "Usually 2 cleanings per benefit period unless plan allows exceptions."
+      }
+    },
+    "Cigna Dental": {
+      "common_denial_codes": [
+        "bundling",
+        "not_covered",
+        "missing_info"
+      ],
+      "denial_categories": [
+        "bundling",
+        "missing_documentation",
+        "coordination_of_benefits"
+      ],
+      "strategy_name": "Cigna Coding Clarification Strategy",
+      "appeal_language": "Clarify coding rationale, separate distinct services, and align claim documentation to Cigna processing rules.",
+      "required_documentation": [
+        "Itemized clinical notes",
+        "Narrative differentiating separately billable procedures",
+        "Claim-level coordination of benefits details when applicable",
+        "Any requested attachments noted on EOB"
+      ],
+      "frequency_limitations": {
+        "D2392": "Composite restoration limitations may apply by tooth/surface history.",
+        "D2750": "Crown replacement frequency limits may apply by plan interval."
+      }
+    }
+  }
+}
