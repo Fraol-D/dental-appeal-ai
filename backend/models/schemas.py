@@ -8,6 +8,7 @@ DenialCategory = Literal[
     "medical_necessity",
     "missing_documentation",
     "coordination_of_benefits",
+    "invalid_input",
 ]
 ConfidenceLevel = Literal["high", "medium", "low"]
 
@@ -47,6 +48,11 @@ class DenialClassification(BaseModel):
             return None
         cleaned = value.strip()
         return cleaned or None
+
+
+class DenialValidityCheck(BaseModel):
+    is_valid_denial: bool
+    reason: str = Field(..., min_length=5)
 
 
 class AppealApproach(BaseModel):

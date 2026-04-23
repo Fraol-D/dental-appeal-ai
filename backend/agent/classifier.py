@@ -2,7 +2,7 @@ import json
 import re
 from typing import Any, Optional
 
-from models.schemas import DenialClassification
+from models.schemas import DenialClassification, DenialValidityCheck
 from services.gemini import generate_with_gemini
 
 
@@ -18,6 +18,31 @@ def _extract_json_object(text: str) -> dict[str, Any]:
     raise ValueError("Gemini response did not include a JSON object.")
 
 
+def validate_denial_text(raw_denial_text: str) -> DenialValidityCheck:
+    prompt = f"""
+You are validating whether input text is a plausible dental insurance denial reason.
+
+A valid denial text usually contains one or more insurance-denial signals such as:
+- denial/denied wording
+- claim or EOB references
+- coverage limitation language
+- missing documentation requirements
+- payer policy or coordination language
+- CDT code or procedure references
+
+Return ONLY a JSON object with these exact keys:
+- is_valid_denial: boolean
+- reason: short plain-English explanation (1 sentence)
+
+Input text:
+{raw_denial_text}
+""".strip()
+
+    raw_response = generate_with_gemini(prompt)
+    parsed = _extract_json_object(raw_response)
+    return DenialValidityCheck.model_validate(parsed)
+
+
 def classify_denial(
     raw_denial_text: str,
     payer_name: Optional[str] = None,
@@ -27,7 +52,7 @@ def classify_denial(
 You are classifying a dental insurance denial.
 
 Return ONLY a JSON object with these exact keys:
-- denial_category: one of ["frequency_limitation", "bundling", "medical_necessity", "missing_documentation", "coordination_of_benefits"]
+- denial_category: one of ["frequency_limitation", "bundling", "medical_necessity", "missing_documentation", "coordination_of_benefits", "invalid_input"]
 - cdt_code: a CDT code like "D4341" or null
 - payer_name: payer name string or null
 - confidence: one of ["high", "medium", "low"]
