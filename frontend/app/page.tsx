@@ -13,49 +13,65 @@ const HEADLINE = "Appeal dental denials with clinical AI precision";
 
 const STEPS = [
   {
-    title: "Paste the denial reason",
-    body: "Drop in the payer response and we classify the denial pattern immediately.",
+    title: "Classify the denial",
+    body: "Paste the payer response and AppealMD identifies the denial pattern and CDT context in seconds.",
   },
   {
-    title: "Map payer logic",
-    body: "AppealMD aligns policy language to payer behavior in seconds.",
+    title: "Map payer-specific rules",
+    body: "We align the case to payer policy logic and required documentation before drafting your response.",
   },
   {
-    title: "Send a polished appeal",
-    body: "Get a professional, claim-ready letter your team can review and submit.",
+    title: "Generate a ready-to-send appeal",
+    body: "Get a polished, editable letter your team can review and submit with clinical confidence.",
   },
 ];
 
 export default function LandingPage() {
+  const headlineWords = HEADLINE.split(" ");
+
   return (
-    <main className="overflow-x-hidden bg-[var(--color-dark-surface)] text-white">
+    <main className="relative overflow-x-hidden bg-[var(--color-dark-surface)] text-white">
+      <AtmosphericPlusField className="z-0" />
       <GlassNavbar />
 
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pt-24">
-        <AtmosphericPlusField className="z-0" />
+      <section className="relative z-10 flex min-h-screen items-center justify-center overflow-hidden px-6 pt-24">
         <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(46,134,193,0.22),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(30,58,95,0.5),transparent_40%)]" />
 
         <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
-          <span className="pointer-events-none absolute inset-x-0 top-10 font-manrope text-[clamp(4rem,16vw,10rem)] font-extrabold tracking-[-0.03em] text-white/5">
+          <span className="pointer-events-none absolute inset-x-0 top-10 font-manrope text-[clamp(4rem,16vw,10rem)] font-extrabold tracking-[-0.03em] text-white/[0.04]">
             AppealMD
           </span>
 
-          <h1 className="font-manrope text-[clamp(2.2rem,7vw,3.5rem)] font-extrabold leading-[1.06] tracking-[-0.02em] text-white">
-            {HEADLINE.split("").map((char, index) => (
-              <motion.span
-                key={`${char}-${index}`}
-                initial={{ y: -30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{
-                  delay: index * 0.03,
-                  duration: 0.6,
-                  ease: [0.34, 1.56, 0.64, 1],
-                }}
-                className="inline-block"
-              >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))}
+          <h1 className="mx-auto max-w-[24ch] font-manrope text-[clamp(2.2rem,7vw,3.5rem)] font-extrabold leading-[1.06] tracking-[-0.02em] text-white">
+            {(() => {
+              let globalCharIndex = 0;
+
+              return headlineWords.map((word, wordIndex) => {
+                const wordStartIndex = globalCharIndex;
+                globalCharIndex += word.length + 1;
+
+                return (
+                  <span key={`${word}-${wordIndex}`} className="inline-block whitespace-nowrap">
+                    {word.split("").map((char, charIndex) => (
+                      <motion.span
+                        key={`${char}-${wordIndex}-${charIndex}`}
+                        initial={{ y: -30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{
+                          delay: (wordStartIndex + charIndex) * 0.03,
+                          duration: 0.6,
+                          ease: [0.34, 1.56, 0.64, 1],
+                        }}
+                        className="inline-block"
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                    {wordIndex < headlineWords.length - 1 ? "\u00A0" : null}
+                  </span>
+                );
+              });
+            })()}
           </h1>
 
           <p className="mt-5 max-w-2xl font-work text-lg leading-relaxed text-[var(--color-secondary-text)]">
@@ -68,13 +84,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-brand-navy)] px-6 py-20 sm:py-24">
+      <div className="relative z-10">
+        <PayerMarquee />
+      </div>
+
+      <section className="relative z-10 bg-[var(--color-brand-navy)] px-6 py-20 sm:py-24">
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <VerticalReveal>
             <div>
               <p className="font-inter text-xs uppercase tracking-[0.18em] text-[var(--color-secondary-text)]">How it works</p>
-              <h2 className="mt-4 font-manrope text-[clamp(1.9rem,4vw,2.25rem)] font-extrabold tracking-[-0.02em]">
-                Clinical workflow in three precise steps
+              <h2 className="mt-4 font-manrope text-[clamp(1.9rem,4vw,2.25rem)] font-extrabold tracking-[-0.02em] text-white">
+                Three steps. Zero manual work.
               </h2>
 
               <div className="mt-10 space-y-10">
@@ -82,10 +102,10 @@ export default function LandingPage() {
                   <motion.article
                     key={step.title}
                     className="rounded-2xl border border-white/10 bg-[rgba(30,58,95,0.82)] p-6"
-                    initial={{ clipPath: "inset(100% 0 0 0)", opacity: 0.6 }}
-                    whileInView={{ clipPath: "inset(0% 0 0 0)", opacity: 1 }}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.4 }}
-                    transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.7, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <p className="font-manrope text-2xl font-bold text-[var(--color-clinical-blue)]">+ {index + 1}</p>
                     <h3 className="mt-3 font-manrope text-xl font-semibold text-white">{step.title}</h3>
@@ -107,7 +127,7 @@ export default function LandingPage() {
                       Processing
                     </span>
                   </div>
-                  <h3 className="font-manrope text-xl font-semibold">Denial Appeal Letter</h3>
+                  <h3 className="font-manrope text-xl font-semibold text-white">Denial Appeal Letter</h3>
                   <div className="space-y-3 text-sm leading-relaxed text-[var(--color-secondary-text)]">
                     <p>[PATIENT NAME]</p>
                     <p>Re: Claim [CLAIM NUMBER] for [DATE OF SERVICE]</p>
@@ -125,9 +145,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <PayerMarquee />
-
-      <section className="bg-[var(--color-dark-surface)] px-6 py-20 sm:py-24">
+      <section className="relative z-10 bg-[var(--color-dark-surface)] px-6 py-20 sm:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="font-manrope text-[clamp(1.9rem,4vw,2.25rem)] font-extrabold tracking-[-0.02em] text-white">
             Be first to recover denied revenue with AppealMD

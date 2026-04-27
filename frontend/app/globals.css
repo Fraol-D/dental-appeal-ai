@@ -71,14 +71,40 @@ body {
 }
 
 .marquee-track {
-  animation: marquee-left 28s linear infinite;
+  display: flex;
+  align-items: center;
+  width: max-content;
+  min-width: 100%;
+  animation: marquee-left 34s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.marquee-set {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2.25rem;
+  min-width: max-content;
+  padding-right: 2.25rem;
 }
 
 @keyframes marquee-left {
   0% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .marquee-track {
+    animation-duration: 28s;
+  }
+
+  .marquee-set {
+    gap: 1.25rem;
+    padding-right: 1.25rem;
   }
 }
