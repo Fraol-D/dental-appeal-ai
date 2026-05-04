@@ -9,14 +9,52 @@ type WaitlistFormProps = {
 export function WaitlistForm({ compact = false }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
   const [isDentalOffice, setIsDentalOffice] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const apiBaseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000").replace(/\/$/, "");
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!email.trim()) {
       return;
     }
-    setSubmitted(true);
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/waitlist`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          is_dental_office: isDentalOffice,
+        }),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        return;
+      }
+
+      const payload = (await response.json().catch(() => null)) as { detail?: string } | null;
+      const detail = payload?.detail ?? "Unable to submit right now. Please try again.";
+
+      if (response.status === 409) {
+        setErrorMessage("This email is already registered.");
+        return;
+      }
+
+      setErrorMessage(detail);
+    } catch {
+      setErrorMessage("Unable to submit right now. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,8 +72,8 @@ export function WaitlistForm({ compact = false }: WaitlistFormProps) {
           />
         </label>
 
-        <button type="submit" className="btn-primary justify-center px-6 py-3 text-sm">
-          Request Access <span aria-hidden>→</span>
+        <button type="submit" disabled={isSubmitting} className="btn-primary justify-center px-6 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-70">
+          {isSubmitting ? "Submitting..." : "Request Access"} <span aria-hidden>→</span>
         </button>
       </div>
 
@@ -57,8 +95,10 @@ export function WaitlistForm({ compact = false }: WaitlistFormProps) {
       </p>
 
       {submitted ? (
-        <p className="mt-3 text-sm text-[var(--color-clinical-blue)]">Thanks. You are on the early access list.</p>
+        <p className="mt-3 text-sm text-[var(--color-clinical-blue)]">You&apos;re on the list</p>
       ) : null}
+
+      {errorMessage ? <p className="mt-3 text-sm text-rose-300">{errorMessage}</p> : null}
     </form>
   );
 }

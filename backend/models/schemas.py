@@ -1,6 +1,6 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 DenialCategory = Literal[
     "frequency_limitation",
@@ -88,3 +88,17 @@ class GenerateAppealResponse(BaseModel):
     classification: DenialClassification
     appeal_approach: AppealApproach
     letter: str
+
+
+class WaitlistSignupInput(BaseModel):
+    email: EmailStr
+    is_dental_office: bool = False
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: EmailStr) -> str:
+        return str(value).strip().lower()
+
+
+class WaitlistSignupResponse(BaseModel):
+    message: str
