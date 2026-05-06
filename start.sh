@@ -34,7 +34,7 @@ if [ -d backend ]; then
 
   PORT="${PORT:-8000}"
   echo "Starting backend on port $PORT"
-  exec uvicorn main:app --host 0.0.0.0 --port "$PORT"
+  exec python -m uvicorn main:app --host 0.0.0.0 --port "$PORT"
   popd >/dev/null
 else
   echo "No backend directory found; nothing to start"
