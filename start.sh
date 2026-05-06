@@ -26,15 +26,25 @@ fi
 if [ -d backend ]; then
   echo "Installing backend dependencies..."
   pushd backend >/dev/null
-  if command -v pip >/dev/null 2>&1 && [ -f requirements.txt ]; then
-    pip install -r requirements.txt
+
+  if command -v python3 >/dev/null 2>&1; then
+    PYTHON_BIN="python3"
+  elif command -v python >/dev/null 2>&1; then
+    PYTHON_BIN="python"
   else
-    echo "pip not found or requirements.txt missing; skipping pip install"
+    echo "No Python interpreter found on PATH"
+    exit 1
+  fi
+
+  if [ -f requirements.txt ]; then
+    "$PYTHON_BIN" -m pip install -r requirements.txt
+  else
+    echo "requirements.txt missing; skipping pip install"
   fi
 
   PORT="${PORT:-8000}"
   echo "Starting backend on port $PORT"
-  exec python -m uvicorn main:app --host 0.0.0.0 --port "$PORT"
+  exec "$PYTHON_BIN" -m uvicorn main:app --host 0.0.0.0 --port "$PORT"
   popd >/dev/null
 else
   echo "No backend directory found; nothing to start"
