@@ -112,6 +112,14 @@ def _consume_rate_limit(ip_address: str) -> bool:
         return True
 
 
+@app.get("/health")
+def health_check() -> dict[str, object]:
+    return {
+        "status": "ok",
+        "supabase_configured": bool(SUPABASE_URL and SUPABASE_KEY),
+    }
+
+
 @app.post("/generate-appeal", response_model=GenerateAppealResponse)
 def generate_appeal(payload: DenialInput) -> GenerateAppealResponse:
     try:
