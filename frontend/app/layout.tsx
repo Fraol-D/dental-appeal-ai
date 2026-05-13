@@ -24,6 +24,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "AppealMD",
   description: "Recover denied dental revenue with payer-aware appeal letters in seconds.",
+  icons: {
+    icon: [
+      { url: "/assets/favicon/favicon.ico" },
+      { url: "/assets/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/assets/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/assets/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/assets/favicon/site.webmanifest",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
